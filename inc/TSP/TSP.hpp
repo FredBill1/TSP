@@ -16,8 +16,8 @@ class TSP_Solver {
 
     inline float get_edge_dist(int edge) { return dist[edge / MAXN][edge % MAXN]; }
 
-    bool three_opt_iter(int path[], int cnt);
-    void three_opt(int path[], int cnt, int max_iter);
+    float three_opt_iter(int path[], int cnt);
+    void three_opt(int path[], int cnt);
 
  public:
     int N;

@@ -4,13 +4,14 @@
 #include <bitset>
 #include <cmath>
 #include <cstring>
+#include <numeric>
 
 #include "TSP/Unionfind.hpp"
 #include "TSP/utils.hpp"
 
 namespace TSP {
 
-constexpr int MAX_ITER = 20;
+constexpr float term_cond = 1e-2;
 
 // Kruskal
 void TSP_Solver::MST() {
@@ -99,8 +100,8 @@ static inline void rotate_1(int arr[], int cnt) {
     arr[cnt - 1] = tmp;
 }
 
-bool TSP_Solver::three_opt_iter(int path[], int cnt) {
-    bool res = false;
+float TSP_Solver::three_opt_iter(int path[], int cnt) {
+    float res = 0;
     rep(i, 0, cnt) {
         if (i) rotate_1(path, cnt);
         int &A = path[0], &B = path[1];
@@ -113,16 +114,12 @@ bool TSP_Solver::three_opt_iter(int path[], int cnt) {
                              dist[A][D] + dist[E][B] + dist[C][F], dist[F][B] + dist[C][D] + dist[E][A]};
                 int x = std::min_element(dxs, dxs + 4) - dxs;
                 if (dxs[x] < d0) {
-                    res = true;
+                    res += d0 - dxs[x];
                     switch (x) {
                     case 0: std::reverse(path + 1, path + (j + 1)); break;
                     case 1: std::reverse(path + (j + 1), path + (k + 1)); break;
                     case 3: std::reverse(path + 1, path + (k + 1)); break;
-                    case 2:
-                        std::reverse(path + 1, path + (j + 1));
-                        std::reverse(path + (j + 1), path + (k + 1));
-                        std::reverse(path + 1, path + (k + 1));
-                        break;
+                    case 2: std::rotate(path + 1, path + (j + 1), path + (k + 1)); break;
                     }
                 }
             }
@@ -131,13 +128,20 @@ bool TSP_Solver::three_opt_iter(int path[], int cnt) {
     return res;
 }
 
-void TSP_Solver::three_opt(int path[], int cnt, int max_iter) {
+void TSP_Solver::three_opt(int path[], int cnt) {
     if (cnt < 5) return;
-    while (max_iter-- && three_opt_iter(path, cnt)) {}
+    float last_length = 0;
+    rep(i, 1, cnt) last_length += dist[path[i - 1]][path[i]];
+    last_length += dist[path[cnt - 1]][path[0]];
+    for (;;) {
+        float delta = three_opt_iter(path, cnt);
+        if (delta <= last_length * term_cond) break;
+        last_length -= delta;
+    }
 }
 
 void TSP_Solver::make_shorter() {
-    three_opt(hamilton_path, N, MAX_ITER);
+    three_opt(hamilton_path, N);
     int nxt[MAXN];
     rep(i, 0, N - 1) nxt[hamilton_path[i]] = hamilton_path[i + 1];
     nxt[hamilton_path[N - 1]] = hamilton_path[0];

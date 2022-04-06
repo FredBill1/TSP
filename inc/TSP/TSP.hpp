@@ -1,0 +1,30 @@
+#ifndef _TSP_hpp
+#define _TSP_hpp
+namespace TSP {
+
+constexpr int MAXN = 200;
+
+class TSP_Solver {
+    int all_edges[MAXN * 3 / 2], all_edges_cnt;
+    int mst_node_rank[MAXN];
+    int eulerian_circle[MAXN * 3 / 2];
+    void MST();
+    void odd_verts_minimum_weight_match();
+    void get_eulerian_circle();
+    void make_hamilton();
+    void make_shorter();
+
+    inline float get_edge_dist(int edge) { return dist[edge / MAXN][edge % MAXN]; }
+
+    bool three_opt_iter(int path[], int cnt);
+    void three_opt(int path[], int cnt, int max_iter);
+
+ public:
+    int N;
+    float dist[MAXN][MAXN];
+    int hamilton_path[MAXN];
+    void solve();
+};
+
+}  // namespace TSP
+#endif  // _TSP_hpp

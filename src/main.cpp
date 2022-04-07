@@ -27,6 +27,7 @@ int main() {
         rep(j, i + 1, tsp.N) tsp.dist[j][i] = tsp.dist[i][j] = pts[i].dist(pts[j]);
     }
     tsp.solve();
+    cout << tsp.length << '\n';
     rep(i, 0, tsp.N) cout << tsp.hamilton_path[i] << ' ';
     return 0;
 }

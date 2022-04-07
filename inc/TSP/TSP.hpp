@@ -14,7 +14,9 @@ class TSP_Solver {
     void make_hamilton();
     void make_shorter();
 
-    inline float get_edge_dist(int edge) { return dist[edge / MAXN][edge % MAXN]; }
+    inline float get_edge_dist(int edge) const { return dist[edge / MAXN][edge % MAXN]; }
+
+    float get_path_length(int path[], int cnt) const;
 
     float three_opt_iter(int path[], int cnt);
     void three_opt(int path[], int cnt);
@@ -22,8 +24,9 @@ class TSP_Solver {
  public:
     int N;
     float dist[MAXN][MAXN];
-    int hamilton_path[MAXN];
     void solve();
+    float length;
+    int hamilton_path[MAXN];
 };
 
 }  // namespace TSP

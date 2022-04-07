@@ -26,11 +26,13 @@ with open(InputFile, "r") as f:
 out, err = Popen([TSP_EXE], stdin=PIPE, stdout=PIPE).communicate(Input.encode("ascii"))
 out = out.decode("ascii")
 print(out)
-res = [int(v) for v in out.split()]
+out = out.split()
+res = [int(v) for v in out[1:]]
 
 
 fig, ax = plt.subplots()
 ax.plot(*verts.transpose(), marker="o", markersize=2, linestyle="", color="black")
 ax.add_patch(Polygon(verts[res], fill=False, color="red"))
+ax.text(0, 0, f"{float(out[0]):.2f}")
 
 plt.show()

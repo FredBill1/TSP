@@ -7,5 +7,5 @@ include_directories(inc)
 
 aux_source_directory(./src SRC_FILES)
 
-add_executable(${PROJECT_NAME} ${SRC_FILES})
+add_executable(TSP ${SRC_FILES})
 

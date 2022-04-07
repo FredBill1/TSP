@@ -100,6 +100,13 @@ static inline void rotate_1(int arr[], int cnt) {
     arr[cnt - 1] = tmp;
 }
 
+float TSP_Solver::get_path_length(int path[], int cnt) const {
+    float res = 0;
+    rep(i, 1, cnt) res += dist[path[i - 1]][path[i]];
+    res += dist[path[cnt - 1]][path[0]];
+    return res;
+}
+
 float TSP_Solver::three_opt_iter(int path[], int cnt) {
     float res = 0;
     rep(i, 0, cnt) {
@@ -130,13 +137,10 @@ float TSP_Solver::three_opt_iter(int path[], int cnt) {
 
 void TSP_Solver::three_opt(int path[], int cnt) {
     if (cnt < 5) return;
-    float last_length = 0;
-    rep(i, 1, cnt) last_length += dist[path[i - 1]][path[i]];
-    last_length += dist[path[cnt - 1]][path[0]];
     for (;;) {
         float delta = three_opt_iter(path, cnt);
-        if (delta <= last_length * term_cond) break;
-        last_length -= delta;
+        if (delta <= length * term_cond) break;
+        length -= delta;
     }
 }
 
@@ -156,6 +160,7 @@ void TSP_Solver::solve() {
     odd_verts_minimum_weight_match();
     get_eulerian_circle();
     make_hamilton();
+    length = get_path_length(hamilton_path, N);
     make_shorter();
 }
 

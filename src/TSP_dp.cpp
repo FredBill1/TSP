@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 using namespace std;
 
@@ -11,23 +12,20 @@ int N;
 float dist[MAXN][MAXN], length;
 int hamilton_path[MAXN];
 float dp[1 << MAXN][MAXN];
-int nxt[1 << MAXN][MAXN];
+int pre[1 << MAXN][MAXN];
 
 void solve() {
     rep(S, 0, 1 << N) rep(u, 0, N) dp[S][u] = HUGE_VALF;
-    dp[(1 << N) - 1][0] = 0;
-    qer(S, (1 << N) - 2, 0) rep(u, 0, N) rep(v, 0, N) if (!(S >> v & 1)) {
-        float cur = dp[S | 1 << v][v] + dist[u][v];
-        if (cur < dp[S][u]) {
-            dp[S][u] = cur;
-            nxt[S][u] = v;
-        }
+    dp[1][0] = 0;
+    rep(S, 1, 1 << N) rep(u, 0, N) if (S >> u & 1) rep(v, 0, N) if (!(S >> v & 1)) {
+        float cur = dp[S][u] + dist[u][v];
+        int T = S | (1 << v);
+        if (cur < dp[T][v]) dp[T][v] = cur, pre[T][v] = u;
     }
-    length = dp[0][0];
-    for (int i = 0, S = 0, u = 0; i < N; ++i) {
-        hamilton_path[i] = u;
-        S |= 1 << (u = nxt[S][u]);
-    }
+    int V = 1;
+    rep(v, 2, N) if (dp[(1 << N) - 1][v] + dist[v][0] < dp[(1 << N) - 1][V] + dist[V][0]) V = v;
+    length = dp[(1 << N) - 1][V] + dist[V][0];
+    for (int i = N - 1, S = (1 << N) - 1, u = V; i >= 0; --i) V = pre[S][u], hamilton_path[i] = u, S -= 1 << u, u = V;
 }
 
 int main() {

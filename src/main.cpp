@@ -1,21 +1,12 @@
-#include <cmath>
 #include <iostream>
 using namespace std;
 
+#include "TSP/Point.hpp"
 #include "TSP/TSP.hpp"
 #include "TSP/utils.hpp"
 using namespace TSP;
 
 TSP_Solver tsp;
-
-struct Point {
-    float x, y;
-    Point(float _x = 0., float _y = 0.) : x(_x), y(_y) {}
-    float dist(const Point &p) const {
-        float dx = x - p.x, dy = y - p.y;
-        return std::sqrt(dx * dx + dy * dy);
-    }
-};
 
 Point pts[MAXN];
 

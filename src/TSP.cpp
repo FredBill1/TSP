@@ -11,8 +11,6 @@
 
 namespace TSP {
 
-constexpr float term_cond = 1e-2;
-
 // Kruskal
 void TSP_Solver::MST() {
     static Unionfind<MAXN> uf;

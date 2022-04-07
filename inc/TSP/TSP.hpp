@@ -1,8 +1,7 @@
 #ifndef _TSP_hpp
 #define _TSP_hpp
+#include "TSP/config.hpp"
 namespace TSP {
-
-constexpr int MAXN = 200;
 
 class TSP_Solver {
     int all_edges[MAXN * 3 / 2], all_edges_cnt;

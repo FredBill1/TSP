@@ -11,6 +11,17 @@
 
 namespace TSP {
 
+constexpr int small_case_N = 4;
+
+// Bruteforce
+void TSP_Solver::solve_small_case() {
+    int cur[small_case_N];
+    std::iota(cur, cur + N, 0), std::iota(hamilton_path, hamilton_path + N, 0);
+    float min_len = get_path_length(cur, N);
+    while (std::next_permutation(cur, cur + N))
+        if (float len = get_path_length(cur, N); len < min_len) min_len = len, std::copy(cur, cur + N, hamilton_path);
+}
+
 // Kruskal
 void TSP_Solver::MST() {
     static Unionfind<MAXN> uf;
@@ -134,7 +145,7 @@ float TSP_Solver::three_opt_iter(int path[], int cnt) {
 }
 
 void TSP_Solver::three_opt(int path[], int cnt) {
-    if (cnt < 5) return;
+    // if (cnt <= small_case_N) return;  // won't happen because TSP_Solver::solve() already checks this
     for (;;) {
         float delta = three_opt_iter(path, cnt);
         if (delta <= length * term_cond) break;
@@ -154,6 +165,7 @@ void TSP_Solver::make_shorter() {
 }
 
 void TSP_Solver::solve() {
+    if (N <= small_case_N) return solve_small_case();
     MST();
     odd_verts_minimum_weight_match();
     get_eulerian_circle();

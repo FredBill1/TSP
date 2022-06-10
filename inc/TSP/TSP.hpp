@@ -7,6 +7,7 @@ class TSP_Solver {
     int all_edges[MAXN * 3 / 2], all_edges_cnt;
     int mst_node_rank[MAXN];
     int eulerian_circle[MAXN * 3 / 2];
+    void solve_small_case();
     void MST();
     void odd_verts_minimum_weight_match();
     void get_eulerian_circle();

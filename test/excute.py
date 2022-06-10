@@ -13,9 +13,10 @@ fig, ax = plt.subplots()
 N = 200
 LIM = 10
 
+mode = int(input("Mode <0/1>: "))
 
 (ax_verts,) = ax.plot([0], [0], marker="o", markersize=2, linestyle="", color="black")
-ax_edges = Polygon([[0, 0], [0, 0]], fill=False, color="red")
+ax_edges = Polygon([[0, 0], [0, 0]], closed=mode == 0, fill=False, color="red")
 ax.add_patch(ax_edges)
 length_text = ax.text(-0.4, -0.4, "0")
 ax.set_xlim(0 - 0.5, LIM + 0.5)
@@ -24,7 +25,7 @@ ax.set_ylim(0 - 0.5, LIM + 0.5)
 
 def run_tsp():
     verts = np.random.uniform(0, LIM, (N, 2))
-    Input = f"{N}\n" + "\n".join(["{} {}".format(x, y) for x, y in verts])
+    Input = f"{mode}\n{N}\n" + "\n".join(["{} {}".format(x, y) for x, y in verts])
     out, err = Popen([TSP_EXE], stdin=PIPE, stdout=PIPE).communicate(Input.encode("ascii"))
     out = out.decode("ascii").split()
     length = float(out[0])

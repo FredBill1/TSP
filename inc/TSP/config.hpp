@@ -11,7 +11,8 @@
 
 namespace TSP {
 
-constexpr int MAXN = TSP_MAX_POINT_NUM;
+// the +1 space will be used when calculating the path without returning to the starting point
+constexpr int MAXN = TSP_MAX_POINT_NUM + 1;
 constexpr float term_cond = TSP_TERM_COND;
 
 }  // namespace TSP

@@ -25,6 +25,7 @@ class TSP_Solver {
     int N;
     float dist[MAXN][MAXN];
     void solve();
+    void solve_without_returning();
     float length;
     int hamilton_path[MAXN];
 };

@@ -4,6 +4,7 @@
 #include <bitset>
 #include <cmath>
 #include <cstring>
+#include <limits>
 #include <numeric>
 
 #include "TSP/Unionfind.hpp"
@@ -172,6 +173,27 @@ void TSP_Solver::solve() {
     make_hamilton();
     length = get_path_length(hamilton_path, N);
     make_shorter();
+}
+
+void TSP_Solver::solve_without_returning() {
+    dist[0][N] = dist[N][0] = dist[N][N] = 0;
+    for (int u = 1; u < N; ++u) dist[u][N] = dist[N][u] = std::numeric_limits<float>::infinity();
+
+    int res[MAXN - 1];
+    float res_len = std::numeric_limits<float>::infinity();
+    for (int u = 1; u < N; ++u) {
+        dist[u][N] = dist[N][u] = 0;
+        ++N, solve(), --N;
+        if (length < res_len) {
+            if (hamilton_path[1] == N) std::reverse(hamilton_path + 1, hamilton_path + (N + 1));
+            std::copy(hamilton_path, hamilton_path + N, res);
+            res_len = length;
+        }
+        dist[u][N] = dist[N][u] = std::numeric_limits<float>::infinity();
+    }
+
+    length = res_len;
+    std::copy(res, res + N, hamilton_path);
 }
 
 }  // namespace TSP

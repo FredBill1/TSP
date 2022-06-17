@@ -25,11 +25,11 @@ void TSP_Solver::solve_small_case() {
 
 // Kruskal
 void TSP_Solver::MST() {
-    static Unionfind<MAXN> uf;
+    Unionfind<MAXN> uf;
     std::memset(mst_node_rank, 0, sizeof(mst_node_rank[0]) * N);
     uf.init(N);
     int mst_edges_count = 0;
-    static int edges[MAXN * (MAXN - 1) / 2];
+    int edges[MAXN * (MAXN - 1) / 2];
     int edges_count = 0;
     rep(u, 0, N) rep(v, u + 1, N) edges[edges_count++] = u * MAXN + v;
     std::sort(edges, edges + edges_count, [this](int x, int y) { return get_edge_dist(x) < get_edge_dist(y); });

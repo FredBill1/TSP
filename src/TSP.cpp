@@ -60,28 +60,43 @@ void TSP_Solver::odd_verts_minimum_weight_match() {
 
 // Hierholzer's algorithm
 void TSP_Solver::get_eulerian_circle() {
-    int head[MAXN], to[MAXN * 3], nxt[MAXN * 3];
-    memset(head, 0xff, sizeof(head[0]) * N);
+    struct Graph {
+        struct Vex {
+            int first_edge = -1;  // the index of the first edge in the adjacency linked list
+        };
+        struct Edge {
+            int to;          // the index of the destination vertex
+            int next, prev;  // the index of the next and previous edges
+        };
+        Vex vex[MAXN];
+        Edge edge[MAXN * 3];
+        void add_edge(int u, int v, int e) {
+            edge[e].to = v;
+            edge[e].next = vex[u].first_edge;
+            edge[e].prev = -1;
+            vex[u].first_edge = e;
+            if (edge[e].next != -1) edge[edge[e].next].prev = e;
+        }
+    } graph;
     for (int i = 0, cnt = 0; i < all_edges_cnt; ++i) {
-        int edge = all_edges[i], u = edge / MAXN, v = edge % MAXN;
-        to[cnt] = v, nxt[cnt] = head[u], head[u] = cnt++;
-        to[cnt] = u, nxt[cnt] = head[v], head[v] = cnt++;
+        int e = all_edges[i], u = e / MAXN, v = e % MAXN;
+        graph.add_edge(u, v, cnt++);
+        graph.add_edge(v, u, cnt++);
     }
-    int Stack[MAXN * 3 / 2];
-    int sp = 1, res_i = 0, u = Stack[0] = 0;
+    int Stack[MAXN * 3 / 2], sp = 1, res_i = 0, u = Stack[0] = 0;
     while (sp) {
-        if (head[u] != -1) {
-            int v = to[head[u]];
+        if (int e = graph.vex[u].first_edge; e != -1) {
+            int v = graph.edge[e].to;
             Stack[sp++] = v;
-            head[u] = nxt[head[u]];  // delete u->v
+
+            // delete u->v
+            graph.vex[u].first_edge = graph.edge[e].next;
+            graph.edge[graph.edge[e].next].prev = -1;
 
             // delete v->u
-            if (to[head[v]] == u) head[v] = nxt[head[v]];
-            else {
-                int t = head[v];
-                while (to[nxt[t]] != u) t = nxt[t];
-                nxt[t] = nxt[nxt[t]];
-            }
+            e ^= 1;  // v->u
+            (graph.vex[v].first_edge == e ? graph.vex[v].first_edge : graph.edge[graph.edge[e].prev].next) = graph.edge[e].next;
+            graph.edge[graph.edge[e].next].prev = graph.edge[e].prev;
 
             u = v;
         } else {

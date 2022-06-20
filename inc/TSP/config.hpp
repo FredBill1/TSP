@@ -2,11 +2,11 @@
 #define _tsp_config_hpp
 
 #ifndef TSP_MAX_POINT_NUM
-#define TSP_MAX_POINT_NUM 200
+#define TSP_MAX_POINT_NUM 2000
 #endif
 
 #ifndef TSP_TERM_COND
-#define TSP_TERM_COND 1e-2
+#define TSP_TERM_COND 1e-2f
 #endif
 
 namespace TSP {

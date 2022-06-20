@@ -7,6 +7,7 @@
 #include <limits>
 #include <numeric>
 
+#include "TSP/Tour.hpp"
 #include "TSP/Unionfind.hpp"
 #include "TSP/utils.hpp"
 
@@ -119,12 +120,6 @@ void TSP_Solver::make_hamilton() {
     }
 }
 
-static inline void rotate_1(int arr[], int cnt) {
-    int tmp = arr[0];
-    rep(i, 1, cnt) arr[i - 1] = arr[i];
-    arr[cnt - 1] = tmp;
-}
-
 float TSP_Solver::get_path_length(int path[], int cnt) const {
     float res = 0;
     rep(i, 1, cnt) res += dist[path[i - 1]][path[i]];
@@ -132,15 +127,12 @@ float TSP_Solver::get_path_length(int path[], int cnt) const {
     return res;
 }
 
-float TSP_Solver::three_opt_iter(int path[], int cnt) {
+static inline float three_opt_iter(const float dist[MAXN][MAXN], Tour &tour, int cnt) {
     float res = 0;
-    rep(i, 0, cnt) {
-        if (i) rotate_1(path, cnt);
-        int &A = path[0], &B = path[1];
-        rep(j, 2, cnt - 2) {
-            int &C = path[j], &D = path[j + 1];
-            rep(k, j + 2, cnt) {
-                int E = path[k], F = path[k + 1 == cnt ? 0 : k + 1];
+    for (auto a = tour.at(0);;) {
+        for (auto e = std::next(a, 4); std::next(e) != a; ++e) {
+            for (auto c = std::next(a, 2); std::next(c) != e; ++c) {
+                int A = *a, B = *std::next(a), C = *c, D = *std::next(c), E = *e, F = *std::next(e);
                 float d0 = dist[A][B] + dist[C][D] + dist[E][F];
                 float dxs[4]{dist[A][C] + dist[B][D] + dist[E][F], dist[A][B] + dist[C][E] + dist[D][F],
                              dist[A][D] + dist[E][B] + dist[C][F], dist[F][B] + dist[C][D] + dist[E][A]};
@@ -148,25 +140,30 @@ float TSP_Solver::three_opt_iter(int path[], int cnt) {
                 if (dxs[x] < d0) {
                     res += d0 - dxs[x];
                     switch (x) {
-                    case 0: std::reverse(path + 1, path + (j + 1)); break;
-                    case 1: std::reverse(path + (j + 1), path + (k + 1)); break;
-                    case 3: std::reverse(path + 1, path + (k + 1)); break;
-                    case 2: std::rotate(path + 1, path + (j + 1), path + (k + 1)); break;
+                    case 0: tour.reverse(a, c); break;
+                    case 1: tour.reverse(c, e); break;
+                    case 3: tour.reverse(e, a); break;
+                    case 2: tour.rotate(a, c, e); break;
                     }
+                    break;
                 }
             }
         }
+        if ((++a).cur == 0) break;
     }
     return res;
 }
 
 void TSP_Solver::three_opt(int path[], int cnt) {
     // if (cnt <= small_case_N) return;  // won't happen because TSP_Solver::solve() already checks this
+    Tour tour(path, cnt);
     for (;;) {
-        float delta = three_opt_iter(path, cnt);
+        float delta = three_opt_iter(dist, tour, cnt);
         if (delta <= length * term_cond) break;
         length -= delta;
     }
+    auto it = tour.at(0);
+    for (int i = 0; i < cnt; ++i, ++it) path[i] = *it;
 }
 
 void TSP_Solver::make_shorter() {

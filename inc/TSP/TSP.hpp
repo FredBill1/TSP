@@ -18,7 +18,6 @@ class TSP_Solver {
 
     float get_path_length(int path[], int cnt) const;
 
-    float three_opt_iter(int path[], int cnt);
     void three_opt(int path[], int cnt);
 
  public:

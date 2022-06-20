@@ -3,6 +3,7 @@ from os.path import join, realpath, dirname
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 import numpy as np
+from time import time
 
 DIR = dirname(realpath(__file__))
 InputFile = join(DIR, "input.txt")
@@ -26,7 +27,9 @@ ax.set_ylim(0 - 0.5, LIM + 0.5)
 def run_tsp():
     verts = np.random.uniform(0, LIM, (N, 2))
     Input = f"{mode}\n{N}\n" + "\n".join(["{} {}".format(x, y) for x, y in verts])
+    start = time()
     out, err = Popen([TSP_EXE], stdin=PIPE, stdout=PIPE).communicate(Input.encode("ascii"))
+    print(f"Time: {time() - start}")
     out = out.decode("ascii").split()
     length = float(out[0])
     length_text.set_text(f"{length:.2f}")

@@ -7,6 +7,7 @@
 #include <limits>
 #include <numeric>
 
+#include "TSP/AdjacencyList.hpp"
 #include "TSP/Tour.hpp"
 #include "TSP/Unionfind.hpp"
 #include "TSP/utils.hpp"
@@ -61,24 +62,7 @@ void TSP_Solver::odd_verts_minimum_weight_match() {
 
 // Hierholzer's algorithm
 void TSP_Solver::get_eulerian_circle() {
-    struct Graph {
-        struct Vex {
-            int first_edge = -1;  // the index of the first edge in the adjacency linked list
-        };
-        struct Edge {
-            int to;          // the index of the destination vertex
-            int next, prev;  // the index of the next and previous edges
-        };
-        Vex vex[MAXN];
-        Edge edge[MAXN * 3];
-        void add_edge(int u, int v, int e) {
-            edge[e].to = v;
-            edge[e].next = vex[u].first_edge;
-            edge[e].prev = -1;
-            vex[u].first_edge = e;
-            if (edge[e].next != -1) edge[edge[e].next].prev = e;
-        }
-    } graph;
+    AdjacencyList graph;
     for (int i = 0, cnt = 0; i < all_edges_cnt; ++i) {
         int e = all_edges[i], u = e / MAXN, v = e % MAXN;
         graph.add_edge(u, v, cnt++);

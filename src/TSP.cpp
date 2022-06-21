@@ -114,9 +114,9 @@ float TSP_Solver::get_path_length(int path[], int cnt) const {
 static inline float three_opt_iter(const float dist[MAXN][MAXN], Tour &tour, int cnt) {
     float res = 0;
     for (auto a = tour.at(0);;) {
-        for (auto e = std::next(a, 4); std::next(e) != a; ++e) {
-            for (auto c = std::next(a, 2); std::next(c) != e; ++c) {
-                int A = *a, B = *std::next(a), C = *c, D = *std::next(c), E = *e, F = *std::next(e);
+        for (auto e = std::next(a, 4); e.next() != a.cur; ++e) {
+            for (auto c = std::next(a, 2); c.next() != e.cur; ++c) {
+                int A = *a, B = a.next(), C = *c, D = c.next(), E = *e, F = e.next();
                 float d0 = dist[A][B] + dist[C][D] + dist[E][F];
                 float dxs[4]{dist[A][C] + dist[B][D] + dist[E][F], dist[A][B] + dist[C][E] + dist[D][F],
                              dist[A][D] + dist[E][B] + dist[C][F], dist[F][B] + dist[C][D] + dist[E][A]};

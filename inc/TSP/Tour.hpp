@@ -49,8 +49,11 @@ struct Tour {
             pos = pre = x;
         }
         inline void toggle() { pre = tour->node[cur][0] == pre ? tour->node[cur][1] : tour->node[cur][0]; }
+        inline int prev() { return pre; }
+        inline int next() { return tour->node[cur][0] == pre ? tour->node[cur][1] : tour->node[cur][0]; }
     };
     inline iterator at(int pos, int dir = 0) { return iterator(this, pos, node[pos][dir]); }
+
     // any existing iterator between (before_first, before_last) will be invalid
     inline void reverse(const iterator& before_first, iterator& before_last) {
         // no need to check the position because it is guaranteed to be valid during 3-opt

@@ -15,7 +15,13 @@ struct Tour {
             node[v][0] = u;
         }
     }
-    struct iterator : std::iterator<std::bidirectional_iterator_tag, int> {
+    struct iterator {
+        using iterator_category = std::bidirectional_iterator_tag;
+        using value_type = int;
+        using difference_type = int;
+        using pointer = int*;
+        using reference = int&;
+
         Tour* tour;
         int cur, pre;
         iterator(Tour* t, int cur, int pre) : tour(t), cur(cur), pre(pre) {}

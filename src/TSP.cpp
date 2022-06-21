@@ -127,7 +127,7 @@ static inline float three_opt_iter(const float dist[MAXN][MAXN], Tour &tour, int
                 float d0 = dist[A][B] + dist[C][D] + dist[E][F];
                 float dxs[4]{dist[A][C] + dist[B][D] + dist[E][F], dist[A][B] + dist[C][E] + dist[D][F],
                              dist[A][D] + dist[E][B] + dist[C][F], dist[F][B] + dist[C][D] + dist[E][A]};
-                int x = std::min_element(dxs, dxs + 4) - dxs;
+                int x = int(std::min_element(dxs, dxs + 4) - dxs);
                 if (dxs[x] < d0) {
                     res += d0 - dxs[x];
                     switch (x) {

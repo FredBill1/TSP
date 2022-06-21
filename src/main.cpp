@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     cout << "Input file:  " << argv[1] << '\n';
-    cout << "Output file: " << argv[2] << '\n';
+    cout << "Output file: " << argv[2] << "\n\n";
     cout << "Start reading file..." << endl;
 
     ifstream fin(argv[1]);
@@ -28,16 +28,16 @@ int main(int argc, char* argv[]) {
 
     cout << "Total: " << tsp.N << " points\n";
     cout << "maximum iteration: " << max_iter << '\n';
-    cout << "termination condition: " << term_cond << '\n';
+    cout << "termination condition: " << term_cond << "\n\n";
     cout << "Solving TSP..." << endl;
     rep(i, 0, tsp.N) {
         tsp.set_dist(i, i, 0);
         rep(j, i + 1, N) tsp.set_dist(i, j, pts[i].dist(pts[j]));
     }
     delete[] pts;
-    tsp.solve(max_iter, term_cond);
+    tsp.solve(max_iter, term_cond, true);
 
-    cout << "TSP Solved. Total length: " << tsp.length << "\nWriting output file..." << endl;
+    cout << "TSP Solved. Total length: " << tsp.length << "\n\nWriting output file..." << endl;
 
     ofstream fout(argv[2]);
     fout << tsp.length << '\n';

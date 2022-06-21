@@ -52,8 +52,6 @@ struct Tour {
     };
     inline iterator at(int pos, int dir = 0) { return iterator(this, pos, node[pos][dir]); }
     inline void reverse(const iterator& before_first, iterator& before_last) {
-        // std::cout << before_first.pre << ' ' << before_first.cur << ' ' << before_last.pre << ' ' << before_last.cur <<
-        // std::endl; show();
         if (before_first == before_last) return;
         iterator first = std::next(before_first);
         if (first == before_last) return;
@@ -69,8 +67,8 @@ struct Tour {
     inline void rotate(iterator& before_first, iterator& before_n_first, iterator& before_last) {
         reverse(before_first, before_n_first);
         reverse(before_n_first, before_last);
-        reverse(before_last, before_first);
-        // reverse(before_first, before_last);
+        // reverse(before_last, before_first);
+        reverse(before_first, before_last);
     }
     inline void rotate(iterator&& before_first, iterator&& before_n_first, iterator&& before_last) {
         rotate(before_first, before_n_first, before_last);

@@ -126,7 +126,7 @@ static inline float three_opt_iter(const float dist[MAXN][MAXN], Tour &tour, int
                     switch (x) {
                     case 0: tour.reverse(a, c); break;
                     case 1: tour.reverse(c, e); break;
-                    case 3: tour.reverse(e, a); break;
+                    case 3: tour.reverse(a, e); break;
                     case 2: tour.rotate(a, c, e); break;
                     }
                     break;

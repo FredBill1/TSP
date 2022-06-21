@@ -4,6 +4,7 @@
 #include <bitset>
 #include <cmath>
 #include <cstring>
+#include <iostream>
 #include <limits>
 #include <numeric>
 
@@ -27,6 +28,7 @@ void TSP_Solver::solve_small_case() {
 
 // Kruskal algorithm to find the minimum spanning tree
 void TSP_Solver::MST() {
+    std::cout << "minimum spanning tree..." << std::endl;
     Unionfind<MAXN> uf;
     std::memset(mst_node_rank, 0, sizeof(mst_node_rank[0]) * N);
     uf.init(N);
@@ -48,6 +50,7 @@ void TSP_Solver::MST() {
 
 // use greedy method with O(V^2 log V^2) time complexity to find the approximate minimum weight matching
 void TSP_Solver::odd_verts_minimum_weight_match() {
+    std::cout << "minimum weight match..." << std::endl;
     int odd_verts[MAXN];
     int *odd_vert_edges = all_edges + (N - 1);
     int odd_vert_edges_cnt = 0, odd_verts_cnt = 0;
@@ -67,6 +70,7 @@ void TSP_Solver::odd_verts_minimum_weight_match() {
 
 // Hierholzer's algorithm to find the Eulerian circle of the undirected graph
 void TSP_Solver::get_eulerian_circle() {
+    std::cout << "eulerian circle..." << std::endl;
     AdjacencyList graph;
     for (int i = 0, cnt = 0; i < all_edges_cnt; ++i) {
         int e = all_edges[i], u = e / MAXN, v = e % MAXN;
@@ -98,6 +102,7 @@ void TSP_Solver::get_eulerian_circle() {
 
 // traverse the graph and push the first occurrence of each vertex into the tour path
 void TSP_Solver::make_hamilton() {
+    std::cout << "make hamilton path..." << std::endl;
     std::bitset<MAXN> bs;
     bs[0] = true;
     hamilton_path[0] = 0;
@@ -150,6 +155,7 @@ static inline float three_opt_iter(const float dist[MAXN][MAXN], Tour &tour, int
 void TSP_Solver::three_opt(int path[], int cnt, int max_iter, float term_cond) {
     // if (cnt <= small_case_N) return;  // won't happen because TSP_Solver::solve() already checks this
     if (max_iter == 0) return;
+    std::cout << "3-opt..." << std::endl;
     Tour tour(path, cnt);
     for (int iter = 0; max_iter == -1 || iter < max_iter; ++iter) {
         float delta = three_opt_iter(dist, tour, cnt);
@@ -171,27 +177,6 @@ void TSP_Solver::solve(int max_iter, float term_cond) {
 
     // make the first vertex of the path be 0
     std::rotate(hamilton_path, std::find(hamilton_path, hamilton_path + N, 0), hamilton_path + N);
-}
-
-void TSP_Solver::solve_without_returning(int max_iter, float term_cond) {
-    dist[0][N] = dist[N][0] = dist[N][N] = 0;
-    for (int u = 1; u < N; ++u) dist[u][N] = dist[N][u] = std::numeric_limits<float>::infinity();
-
-    int res[MAXN - 1];
-    float res_len = std::numeric_limits<float>::infinity();
-    for (int u = 1; u < N; ++u) {
-        dist[u][N] = dist[N][u] = 0;
-        ++N, solve(max_iter, term_cond), --N;
-        if (length < res_len) {
-            if (hamilton_path[1] == N) std::reverse(hamilton_path + 1, hamilton_path + (N + 1));
-            std::copy(hamilton_path, hamilton_path + N, res);
-            res_len = length;
-        }
-        dist[u][N] = dist[N][u] = std::numeric_limits<float>::infinity();
-    }
-
-    length = res_len;
-    std::copy(res, res + N, hamilton_path);
 }
 
 }  // namespace TSP

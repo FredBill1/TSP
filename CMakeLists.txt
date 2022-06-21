@@ -7,4 +7,5 @@ include_directories(inc)
 
 # aux_source_directory(./src SRC_FILES)
 add_executable(TSP_test src/TSP.cpp src/main_test.cpp)
+add_executable(TSP_tsplib src/TSP.cpp src/main_tsplib.cpp)
 add_executable(TSP_app src/TSP.cpp src/main.cpp)

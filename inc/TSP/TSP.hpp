@@ -38,6 +38,7 @@ class TSP_Solver {
     }
     void set_dist(int i, int j, float d) { dist[j * N + i] = dist[i * N + j] = d; }
     void solve(int max_iter = -1, float term_cond = 1e-2f, bool show_debug_info = false);
+    void calc_path_length() { length = get_path_length(hamilton_path, N); }
     float length;
     int *hamilton_path;
 };

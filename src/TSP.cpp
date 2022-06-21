@@ -28,7 +28,7 @@ void TSP_Solver::solve_small_case() {
 
 // Kruskal algorithm to find the minimum spanning tree
 void TSP_Solver::MST() {
-    // std::cout << "minimum spanning tree..." << std::endl;
+    std::cout << "minimum spanning tree..." << std::endl;
     Unionfind uf(N);
     std::memset(mst_node_rank, 0, sizeof(mst_node_rank[0]) * N);
     int mst_edges_count = 0;
@@ -50,7 +50,7 @@ void TSP_Solver::MST() {
 
 // use greedy method with O(V^2 log V^2) time complexity to find the approximate minimum weight matching
 void TSP_Solver::odd_verts_minimum_weight_match() {
-    // std::cout << "minimum weight match..." << std::endl;
+    std::cout << "minimum weight match..." << std::endl;
     int *odd_verts = new int[N];
     int *odd_vert_edges = all_edges + (N - 1);
     int odd_vert_edges_cnt = 0, odd_verts_cnt = 0;
@@ -75,7 +75,7 @@ void TSP_Solver::odd_verts_minimum_weight_match() {
 
 // Hierholzer's algorithm to find the Eulerian circle of the undirected graph
 void TSP_Solver::get_eulerian_circle() {
-    // std::cout << "eulerian circle..." << std::endl;
+    std::cout << "eulerian circle..." << std::endl;
     AdjacencyList graph(N);
     for (int i = 0, cnt = 0; i < all_edges_cnt; ++i) {
         int e = all_edges[i], u = e / N, v = e % N;
@@ -108,7 +108,7 @@ void TSP_Solver::get_eulerian_circle() {
 
 // traverse the graph and push the first occurrence of each vertex into the tour path
 void TSP_Solver::make_hamilton() {
-    // std::cout << "make hamilton path..." << std::endl;
+    std::cout << "make hamilton path..." << std::endl;
     bool *vi = new bool[N];
     memset(vi, 0, sizeof(bool) * N);
     vi[0] = 1;
@@ -141,7 +141,7 @@ static inline float three_opt_iter(const float *dist, Tour &tour, int N) {
                 float dxs[4]{
                     dist[A * N + C] + dist[B * N + D] + dist[E * N + F], dist[A * N + B] + dist[C * N + E] + dist[D * N + F],
                     dist[A * N + D] + dist[E * N + B] + dist[C * N + F], dist[F * N + B] + dist[C * N + D] + dist[E * N + A]};
-                int x = std::min_element(dxs, dxs + 4) - dxs;
+                int x = int(std::min_element(dxs, dxs + 4) - dxs);
                 if (dxs[x] < d0) {
                     res += d0 - dxs[x];
                     switch (x) {
@@ -164,7 +164,7 @@ static inline float three_opt_iter(const float *dist, Tour &tour, int N) {
 void TSP_Solver::three_opt(int path[], int cnt, int max_iter, float term_cond) {
     // if (cnt <= small_case_N) return;  // won't happen because TSP_Solver::solve() already checks this
     if (max_iter == 0) return;
-    // std::cout << "3-opt..." << std::endl;
+    std::cout << "3-opt..." << std::endl;
     Tour tour(path, cnt);
     for (int iter = 0; max_iter == -1 || iter < max_iter; ++iter) {
         float delta = three_opt_iter(dist, tour, cnt);

@@ -138,7 +138,7 @@ static inline float three_opt_iter(const float dist[MAXN][MAXN], Tour &tour, int
     return res;
 }
 
-void TSP_Solver::three_opt(int path[], int cnt) {
+void TSP_Solver::three_opt(int path[], int cnt, float term_cond) {
     // if (cnt <= small_case_N) return;  // won't happen because TSP_Solver::solve() already checks this
     Tour tour(path, cnt);
     for (;;) {
@@ -150,8 +150,7 @@ void TSP_Solver::three_opt(int path[], int cnt) {
     for (int i = 0; i < cnt; ++i, ++it) path[i] = *it;
 }
 
-void TSP_Solver::make_shorter() {
-    three_opt(hamilton_path, N);
+void TSP_Solver::start_at_zero() {
     int nxt[MAXN];
     rep(i, 0, N - 1) nxt[hamilton_path[i]] = hamilton_path[i + 1];
     nxt[hamilton_path[N - 1]] = hamilton_path[0];
@@ -161,17 +160,18 @@ void TSP_Solver::make_shorter() {
     }
 }
 
-void TSP_Solver::solve() {
+void TSP_Solver::solve(float term_cond) {
     if (N <= small_case_N) return solve_small_case();
     MST();
     odd_verts_minimum_weight_match();
     get_eulerian_circle();
     make_hamilton();
     length = get_path_length(hamilton_path, N);
-    make_shorter();
+    three_opt(hamilton_path, N, term_cond);
+    start_at_zero();
 }
 
-void TSP_Solver::solve_without_returning() {
+void TSP_Solver::solve_without_returning(float term_cond) {
     dist[0][N] = dist[N][0] = dist[N][N] = 0;
     for (int u = 1; u < N; ++u) dist[u][N] = dist[N][u] = std::numeric_limits<float>::infinity();
 
@@ -179,7 +179,7 @@ void TSP_Solver::solve_without_returning() {
     float res_len = std::numeric_limits<float>::infinity();
     for (int u = 1; u < N; ++u) {
         dist[u][N] = dist[N][u] = 0;
-        ++N, solve(), --N;
+        ++N, solve(term_cond), --N;
         if (length < res_len) {
             if (hamilton_path[1] == N) std::reverse(hamilton_path + 1, hamilton_path + (N + 1));
             std::copy(hamilton_path, hamilton_path + N, res);

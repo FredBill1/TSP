@@ -7,9 +7,7 @@ using namespace std;
 using namespace TSP;
 
 int main() {
-    int mode;
     int N;
-    cin >> mode;
     cin >> N;
     TSP_Solver tsp(N);
 
@@ -21,7 +19,7 @@ int main() {
     }
     delete[] pts;
 
-    if (mode == 0) tsp.solve();
+    tsp.solve();
     cout << tsp.length << '\n';
     rep(i, 0, tsp.N) cout << tsp.hamilton_path[i] << ' ';
     return 0;

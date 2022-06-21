@@ -163,7 +163,7 @@ void TSP_Solver::three_opt(int path[], int cnt, int max_iter, float term_cond, b
         float delta = three_opt_iter(dist, tour, cnt);
         bool break_flag = delta <= length * term_cond;
         length -= delta;
-        cout << length << endl;
+        if (show_debug_info) cout << length << endl;
         if (break_flag) break;
     }
     auto it = tour.at(0);

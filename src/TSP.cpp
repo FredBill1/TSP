@@ -90,12 +90,12 @@ void TSP_Solver::get_eulerian_circle() {
 
             // delete u->v
             graph.vex[u].first_edge = graph.edge[e].next;
-            graph.edge[graph.edge[e].next].prev = -1;
+            if (graph.edge[e].next != -1) graph.edge[graph.edge[e].next].prev = -1;
 
             // delete v->u
             e ^= 1;  // v->u
             (graph.vex[v].first_edge == e ? graph.vex[v].first_edge : graph.edge[graph.edge[e].prev].next) = graph.edge[e].next;
-            graph.edge[graph.edge[e].next].prev = graph.edge[e].prev;
+            if (graph.edge[e].next != -1) graph.edge[graph.edge[e].next].prev = graph.edge[e].prev;
 
             u = v;
         } else {

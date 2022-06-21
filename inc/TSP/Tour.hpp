@@ -51,10 +51,12 @@ struct Tour {
         inline void toggle() { pre = tour->node[cur][0] == pre ? tour->node[cur][1] : tour->node[cur][0]; }
     };
     inline iterator at(int pos, int dir = 0) { return iterator(this, pos, node[pos][dir]); }
+    // any existing iterator between (before_first, before_last) will be invalid
     inline void reverse(const iterator& before_first, iterator& before_last) {
-        if (before_first == before_last) return;
+        // no need to check the position because it is guaranteed to be valid during 3-opt
+        // if (before_first == before_last) return;
         iterator first = std::next(before_first);
-        if (first == before_last) return;
+        // if (first == before_last) return;
         iterator last = std::next(before_last);
         before_first.set_next(*before_last);
         before_last.set_next(*before_first);

@@ -1,8 +1,6 @@
 #ifndef _TSP_AdjacencyList_hpp
 #define _TSP_AdjacencyList_hpp
 
-#include "TSP/config.hpp"
-
 namespace TSP {
 
 struct AdjacencyList {

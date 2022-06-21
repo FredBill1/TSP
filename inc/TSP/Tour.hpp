@@ -3,12 +3,12 @@
 
 #include <iterator>
 
-#include "TSP/config.hpp"
 namespace TSP {
 
 struct Tour {
-    int node[MAXN][2];
+    int (*node)[2];
     Tour(int path[], int cnt) {
+        node = new int[cnt][2];
         for (int i = 0; i < cnt; ++i) {
             int u = path[i ? i - 1 : cnt - 1], v = path[i];
             node[u][1] = v;

@@ -34,11 +34,11 @@ void TSP_Solver::MST() {
     int mst_edges_count = 0;
     int *edges = new int[N * (N - 1) / 2];
     int edges_count = 0;
-    rep(u, 0, N) rep(v, u + 1, N) edges[edges_count++] = u * MAXN + v;
+    rep(u, 0, N) rep(v, u + 1, N) edges[edges_count++] = u * N + v;
     std::sort(edges, edges + edges_count, [this](int x, int y) { return get_edge_dist(x) < get_edge_dist(y); });
     rep(i, 0, edges_count) {
         int edge = edges[i];
-        int u = edge / MAXN, v = edge % MAXN;
+        int u = edge / N, v = edge % N;
         if (uf.merge(u, v)) {
             all_edges[mst_edges_count++] = edge;
             ++mst_node_rank[u], ++mst_node_rank[v];
@@ -57,7 +57,7 @@ void TSP_Solver::odd_verts_minimum_weight_match() {
     rep(i, 0, N) if (mst_node_rank[i] & 1) odd_verts[odd_verts_cnt++] = i;
     int *odd_verts_all_edges = new int[odd_verts_cnt * (odd_verts_cnt - 1) / 2], odd_vert_all_edges_cnt = 0;
 
-    rep(u, 1, odd_verts_cnt) rep(v, 0, u) odd_verts_all_edges[odd_vert_all_edges_cnt++] = odd_verts[u] * MAXN + odd_verts[v];
+    rep(u, 1, odd_verts_cnt) rep(v, 0, u) odd_verts_all_edges[odd_vert_all_edges_cnt++] = odd_verts[u] * N + odd_verts[v];
     delete[] odd_verts;
     std::sort(odd_verts_all_edges, odd_verts_all_edges + odd_vert_all_edges_cnt,
               [this](int x, int y) { return get_edge_dist(x) < get_edge_dist(y); });
@@ -65,7 +65,7 @@ void TSP_Solver::odd_verts_minimum_weight_match() {
     std::memset(vi, 0, sizeof(bool) * N);
     for (int i = 0; i < odd_vert_all_edges_cnt && (odd_vert_edges_cnt << 1) < odd_verts_cnt; ++i) {
         int edge = odd_verts_all_edges[i];
-        int u = edge / MAXN, v = edge % MAXN;
+        int u = edge / N, v = edge % N;
         if (!(vi[u] || vi[v])) vi[u] = vi[v] = 1, odd_vert_edges[odd_vert_edges_cnt++] = edge;
     }
     delete[] vi;
@@ -78,7 +78,7 @@ void TSP_Solver::get_eulerian_circle() {
     // std::cout << "eulerian circle..." << std::endl;
     AdjacencyList graph(N);
     for (int i = 0, cnt = 0; i < all_edges_cnt; ++i) {
-        int e = all_edges[i], u = e / MAXN, v = e % MAXN;
+        int e = all_edges[i], u = e / N, v = e % N;
         graph.add_edge(u, v, cnt++);
         graph.add_edge(v, u, cnt++);
     }
@@ -126,20 +126,21 @@ void TSP_Solver::make_hamilton() {
 // get the length of the tour path
 float TSP_Solver::get_path_length(int path[], int cnt) const {
     float res = 0;
-    rep(i, 1, cnt) res += dist[path[i - 1]][path[i]];
-    res += dist[path[cnt - 1]][path[0]];
+    rep(i, 1, cnt) res += dist[path[i - 1] * N + path[i]];
+    res += dist[path[cnt - 1] * N + path[0]];
     return res;
 }
 
-static inline float three_opt_iter(const float dist[MAXN][MAXN], Tour &tour, int cnt) {
+static inline float three_opt_iter(const float *dist, Tour &tour, int N) {
     float res = 0;
     for (auto a = tour.at(0);;) {
         for (auto e = std::next(a, 4); e.next() != a.cur; ++e) {
             for (auto c = std::next(a, 2); c.next() != e.cur; ++c) {
                 int A = *a, B = a.next(), C = *c, D = c.next(), E = *e, F = e.next();
-                float d0 = dist[A][B] + dist[C][D] + dist[E][F];
-                float dxs[4]{dist[A][C] + dist[B][D] + dist[E][F], dist[A][B] + dist[C][E] + dist[D][F],
-                             dist[A][D] + dist[E][B] + dist[C][F], dist[F][B] + dist[C][D] + dist[E][A]};
+                float d0 = dist[A * N + B] + dist[C * N + D] + dist[E * N + F];
+                float dxs[4]{
+                    dist[A * N + C] + dist[B * N + D] + dist[E * N + F], dist[A * N + B] + dist[C * N + E] + dist[D * N + F],
+                    dist[A * N + D] + dist[E * N + B] + dist[C * N + F], dist[F * N + B] + dist[C * N + D] + dist[E * N + A]};
                 int x = std::min_element(dxs, dxs + 4) - dxs;
                 if (dxs[x] < d0) {
                     res += d0 - dxs[x];

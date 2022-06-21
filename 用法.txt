@@ -1,0 +1,14 @@
+./TSP.exe input.txt output.txt template.html result.html
+
+输入input.txt的格式
+第1行1个整数`max_iter`，代表3-opt最大迭代次数
+第2行1个浮点数`term_cond`，代表一次3-opt迭代后路径长度的减少量与前一次迭代后总长度的比值小于这个数时，终止迭代
+第3行1个整数`N`，代表路径点的个数
+后面的N行，每行2个浮点数`x` `y`，代表路径点的横纵坐标。
+
+输出output.txt的格式
+第1行一个浮点数`length`，代表算法得到的路径的总长度
+第2行`N`个整数path[N]，其中第i个整数path[i]代表所得到的路径上第i个点对应到输入的第path[i]个坐标。
+
+输入template.html的格式
+程序会把第一次出现的 `// ~@#!-!#@~ //` 替换成所求得路径上的N个坐标

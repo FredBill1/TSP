@@ -38,7 +38,9 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     cout << "Input file:  " << argv[1] << '\n';
-    cout << "Output file: " << argv[2] << "\n\n";
+    cout << "Output file: " << argv[2] << "\n";
+    cout << "Input html:  " << argv[3] << '\n';
+    cout << "Output html: " << argv[4] << "\n\n";
     cout << "Start reading file..." << endl;
 
     ifstream fin(argv[1]);

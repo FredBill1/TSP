@@ -3,6 +3,7 @@
 
 #include <iterator>
 
+#include "TSP/utils.hpp"
 namespace TSP {
 
 struct Tour {
@@ -64,9 +65,9 @@ struct Tour {
     inline void reverse(const iterator& before_first, iterator& before_last) {
         // no need to check the position because it is guaranteed to be valid during 3-opt
         // if (before_first == before_last) return;
-        iterator first = std::next(before_first);
+        iterator first = utils::next(before_first);
         // if (first == before_last) return;
-        iterator last = std::next(before_last);
+        iterator last = utils::next(before_last);
         before_first.set_next(*before_last);
         before_last.set_next(*before_first);
         first.set_prev(*last);

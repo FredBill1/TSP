@@ -13,8 +13,16 @@ struct AdjacencyList {
         int to;          // the index of the destination vertex
         int next, prev;  // the index of the next and previous edges
     };
-    Vex vex[MAXN];
-    Edge edge[MAXN * 3];
+    Vex* vex;
+    Edge* edge;
+    AdjacencyList(int N) {
+        vex = new Vex[N];
+        edge = new Edge[N * 3];
+    }
+    ~AdjacencyList() {
+        delete[] vex;
+        delete[] edge;
+    }
     void add_edge(int u, int v, int e) {
         edge[e].to = v;
         edge[e].next = vex[u].first_edge;

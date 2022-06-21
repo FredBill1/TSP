@@ -2,11 +2,14 @@
 #define _tsp_Unioufind_hpp
 namespace TSP {
 
-template <int MAXN> struct Unionfind {
-    int fa[MAXN];
-    inline void init(int n) {
+struct Unionfind {
+    int* fa;
+    Unionfind(int n) {
+        fa = new int[n + 1];
         for (int i = 0; i <= n; ++i) fa[i] = i;
     }
+    ~Unionfind() { delete[] fa; }
+    inline void init(int n) {}
     inline int find(int x) {
         if (x == fa[x]) return x;
         int t = x;

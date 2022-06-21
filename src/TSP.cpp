@@ -147,10 +147,11 @@ static inline float three_opt_iter(const float dist[MAXN][MAXN], Tour &tour, int
 
 // 3-opt heuristic algorighm to improve the tour path
 // https://en.wikipedia.org/wiki/3-opt
-void TSP_Solver::three_opt(int path[], int cnt, float term_cond) {
+void TSP_Solver::three_opt(int path[], int cnt, int max_iter, float term_cond) {
     // if (cnt <= small_case_N) return;  // won't happen because TSP_Solver::solve() already checks this
+    if (max_iter == 0) return;
     Tour tour(path, cnt);
-    for (;;) {
+    for (int iter = 0; max_iter == -1 || iter < max_iter; ++iter) {
         float delta = three_opt_iter(dist, tour, cnt);
         if (delta <= length * term_cond) break;
         length -= delta;
@@ -159,20 +160,20 @@ void TSP_Solver::three_opt(int path[], int cnt, float term_cond) {
     for (int i = 0; i < cnt; ++i, ++it) path[i] = *it;
 }
 
-void TSP_Solver::solve(float term_cond) {
+void TSP_Solver::solve(int max_iter, float term_cond) {
     if (N <= small_case_N) return solve_small_case();
     MST();
     odd_verts_minimum_weight_match();
     get_eulerian_circle();
     make_hamilton();
     length = get_path_length(hamilton_path, N);
-    three_opt(hamilton_path, N, term_cond);
+    three_opt(hamilton_path, N, max_iter, term_cond);
 
     // make the first vertex of the path be 0
     std::rotate(hamilton_path, std::find(hamilton_path, hamilton_path + N, 0), hamilton_path + N);
 }
 
-void TSP_Solver::solve_without_returning(float term_cond) {
+void TSP_Solver::solve_without_returning(int max_iter, float term_cond) {
     dist[0][N] = dist[N][0] = dist[N][N] = 0;
     for (int u = 1; u < N; ++u) dist[u][N] = dist[N][u] = std::numeric_limits<float>::infinity();
 
@@ -180,7 +181,7 @@ void TSP_Solver::solve_without_returning(float term_cond) {
     float res_len = std::numeric_limits<float>::infinity();
     for (int u = 1; u < N; ++u) {
         dist[u][N] = dist[N][u] = 0;
-        ++N, solve(term_cond), --N;
+        ++N, solve(max_iter, term_cond), --N;
         if (length < res_len) {
             if (hamilton_path[1] == N) std::reverse(hamilton_path + 1, hamilton_path + (N + 1));
             std::copy(hamilton_path, hamilton_path + N, res);

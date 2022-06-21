@@ -25,7 +25,7 @@ void TSP_Solver::solve_small_case() {
         if (float len = get_path_length(cur, N); len < min_len) min_len = len, std::copy(cur, cur + N, hamilton_path);
 }
 
-// Kruskal
+// Kruskal algorithm to find the minimum spanning tree
 void TSP_Solver::MST() {
     Unionfind<MAXN> uf;
     std::memset(mst_node_rank, 0, sizeof(mst_node_rank[0]) * N);
@@ -65,7 +65,7 @@ void TSP_Solver::odd_verts_minimum_weight_match() {
     all_edges_cnt = odd_vert_edges_cnt + N - 1;
 }
 
-// Hierholzer's algorithm
+// Hierholzer's algorithm to find the Eulerian circle of the undirected graph
 void TSP_Solver::get_eulerian_circle() {
     AdjacencyList graph;
     for (int i = 0, cnt = 0; i < all_edges_cnt; ++i) {
@@ -96,6 +96,7 @@ void TSP_Solver::get_eulerian_circle() {
     }
 }
 
+// traverse the graph and push the first occurrence of each vertex into the tour path
 void TSP_Solver::make_hamilton() {
     std::bitset<MAXN> bs;
     bs[0] = true;
@@ -109,6 +110,7 @@ void TSP_Solver::make_hamilton() {
     }
 }
 
+// get the length of the tour path
 float TSP_Solver::get_path_length(int path[], int cnt) const {
     float res = 0;
     rep(i, 1, cnt) res += dist[path[i - 1]][path[i]];
@@ -143,6 +145,8 @@ static inline float three_opt_iter(const float dist[MAXN][MAXN], Tour &tour, int
     return res;
 }
 
+// 3-opt heuristic algorighm to improve the tour path
+// https://en.wikipedia.org/wiki/3-opt
 void TSP_Solver::three_opt(int path[], int cnt, float term_cond) {
     // if (cnt <= small_case_N) return;  // won't happen because TSP_Solver::solve() already checks this
     Tour tour(path, cnt);
@@ -155,16 +159,6 @@ void TSP_Solver::three_opt(int path[], int cnt, float term_cond) {
     for (int i = 0; i < cnt; ++i, ++it) path[i] = *it;
 }
 
-void TSP_Solver::start_at_zero() {
-    int nxt[MAXN];
-    rep(i, 0, N - 1) nxt[hamilton_path[i]] = hamilton_path[i + 1];
-    nxt[hamilton_path[N - 1]] = hamilton_path[0];
-    for (int i = 0, u = 0; i < N; ++i) {
-        hamilton_path[i] = u;
-        u = nxt[u];
-    }
-}
-
 void TSP_Solver::solve(float term_cond) {
     if (N <= small_case_N) return solve_small_case();
     MST();
@@ -173,7 +167,9 @@ void TSP_Solver::solve(float term_cond) {
     make_hamilton();
     length = get_path_length(hamilton_path, N);
     three_opt(hamilton_path, N, term_cond);
-    start_at_zero();
+
+    // make the first vertex of the path be 0
+    std::rotate(hamilton_path, std::find(hamilton_path, hamilton_path + N, 0), hamilton_path + N);
 }
 
 void TSP_Solver::solve_without_returning(float term_cond) {

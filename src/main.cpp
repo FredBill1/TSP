@@ -15,7 +15,7 @@ static inline void process_html(TSP_Solver& tsp, const char* input, const char* 
     ifstream in(input);
     string input_template((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
     in.close();
-    constexpr char magic[] = "// ~@#!-!#@~ //";
+    constexpr char magic[] = "/* ~@#!-!#@~ */";
     size_t pos = input_template.find(magic);
     if (pos == string::npos) {
         cout << "Error: " << magic << " not found in " << input << endl;

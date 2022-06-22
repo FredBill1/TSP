@@ -126,7 +126,8 @@ float TSP_Solver::get_path_length(int path[], int cnt) const {
 
 static inline float three_opt_iter(const float *dist, Tour &tour, int N) {
     float res = 0;
-    for (auto a = tour.at(0);;) {
+    auto a = tour.at(0);
+    for (int i = 0; i < N; ++i, ++a) {
         for (auto e = utils::next(a, 4); e.next() != a.cur; ++e) {
             for (auto c = utils::next(a, 2); c.next() != e.cur; ++c) {
                 int A = *a, B = a.next(), C = *c, D = c.next(), E = *e, F = e.next();
@@ -147,7 +148,6 @@ static inline float three_opt_iter(const float *dist, Tour &tour, int N) {
                 }
             }
         }
-        if ((++a).cur == 0) break;
     }
     return res;
 }

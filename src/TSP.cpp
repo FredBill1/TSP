@@ -12,7 +12,7 @@ using std::cout, std::endl, std::flush, std::memset;
 
 namespace TSP {
 
-constexpr int small_case_N = 4;
+constexpr int small_case_N = 5;
 
 // Bruteforce
 void TSP_Solver::solve_small_case() {

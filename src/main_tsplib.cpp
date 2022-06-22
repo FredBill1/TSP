@@ -11,6 +11,7 @@ using namespace TSP;
 int N;
 int tmp;
 float solution_length;
+int iter_cnt;
 
 unique_ptr<TSP_Solver> tsp;
 
@@ -41,12 +42,12 @@ void read_solution(const char* dir) {
     cout << "solution length: " << solution_length << endl;
 }
 
-void solve_problem(int max_iter, float term_cond) { tsp->solve(max_iter, term_cond, true); }
+void solve_problem(int max_iter, float term_cond) { tsp->solve(max_iter, term_cond, true, &iter_cnt); }
 
 void write_result(const char* name, const char* dir) {
     ofstream fout(dir, ios::app);
     fout << name << ',' << N << ',' << solution_length << ',' << tsp->length << ','
-         << (tsp->length - solution_length) / solution_length << '\n';
+         << (tsp->length - solution_length) / solution_length << ',' << iter_cnt << '\n';
     fout.close();
 }
 
@@ -54,7 +55,7 @@ int main(int argc, char* argv[]) {
     if (argc != 4) { return 1; }
     read_problem(argv[1]);
     read_solution(argv[2]);
-    solve_problem(5, 1e-2f);
+    solve_problem(-1, 1e-3f);
     write_result(argv[1], argv[3]);
     return 0;
 }

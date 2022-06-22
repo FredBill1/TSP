@@ -154,23 +154,27 @@ static inline float three_opt_iter(const float *dist, Tour &tour, int N) {
 
 // 3-opt heuristic algorighm to improve the tour path
 // https://en.wikipedia.org/wiki/3-opt
-void TSP_Solver::three_opt(int path[], int cnt, int max_iter, float term_cond, bool show_debug_info) {
+void TSP_Solver::three_opt(int path[], int cnt, int max_iter, float term_cond, bool show_debug_info, int *iter_cnt) {
     // if (cnt <= small_case_N) return;  // won't happen because TSP_Solver::solve() already checks this
-    if (max_iter == 0) return;
+    if (max_iter == 0) {
+        if (iter_cnt) *iter_cnt = 0;
+        return;
+    }
     Tour tour(path, cnt);
-    for (int iter = 0; max_iter == -1 || iter < max_iter; ++iter) {
+    int iter = 0;
+    for (bool break_flag = false; !break_flag && (max_iter == -1 || iter < max_iter); ++iter) {
         if (show_debug_info) cout << "  iter " << iter << ": " << flush;
         float delta = three_opt_iter(dist, tour, cnt);
-        bool break_flag = delta <= length * term_cond;
+        break_flag = delta <= length * term_cond;
         length -= delta;
         if (show_debug_info) cout << length << endl;
-        if (break_flag) break;
     }
     auto it = tour.at(0);
     for (int i = 0; i < cnt; ++i, ++it) path[i] = *it;
+    if (iter_cnt) *iter_cnt = iter;
 }
 
-void TSP_Solver::solve(int max_iter, float term_cond, bool show_debug_info) {
+void TSP_Solver::solve(int max_iter, float term_cond, bool show_debug_info, int *iter_cnt) {
     if (N <= small_case_N) return solve_small_case();
 
     if (show_debug_info) cout << " minimum spanning tree..." << endl;
@@ -187,7 +191,7 @@ void TSP_Solver::solve(int max_iter, float term_cond, bool show_debug_info) {
 
     length = get_path_length(hamilton_path, N);
     if (show_debug_info) cout << " length before 3-opt: " << length << "\n 3-opt..." << endl;
-    three_opt(hamilton_path, N, max_iter, term_cond, show_debug_info);
+    three_opt(hamilton_path, N, max_iter, term_cond, show_debug_info, iter_cnt);
 
     // make the first vertex of the path be 0
     utils::rotate(hamilton_path, utils::find(hamilton_path, hamilton_path + N, 0), hamilton_path + N);

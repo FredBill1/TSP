@@ -12,7 +12,7 @@ class TSP_Solver {
     void odd_verts_minimum_weight_match();
     void get_eulerian_circle();
     void make_hamilton();
-    void three_opt(int path[], int cnt, int max_iter, float term_cond, bool show_debug_info);
+    void three_opt(int path[], int cnt, int max_iter, float term_cond, bool show_debug_info, int *iter_cnt);
 
     inline float get_edge_dist(int edge) const { return dist[edge]; }
 
@@ -37,7 +37,7 @@ class TSP_Solver {
         delete[] hamilton_path;
     }
     void set_dist(int i, int j, float d) { dist[j * N + i] = dist[i * N + j] = d; }
-    void solve(int max_iter = -1, float term_cond = 1e-2f, bool show_debug_info = false);
+    void solve(int max_iter = -1, float term_cond = 1e-2f, bool show_debug_info = false, int *iter_cnt = nullptr);
     void calc_path_length() { length = get_path_length(hamilton_path, N); }
     float length;
     int *hamilton_path;

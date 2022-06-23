@@ -7,7 +7,7 @@ from time import time
 
 DIR = dirname(realpath(__file__))
 InputFile = join(DIR, "input.txt")
-TSP_EXE = join(DIR, "..", "build", "TSP")
+TSP_EXE = join(DIR, "..", "build", "Release", "TSP")
 
 fig, ax = plt.subplots()
 

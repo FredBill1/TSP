@@ -9,7 +9,6 @@
 
 #include "TSP/AdjacencyList.hpp"
 #include "TSP/Tour.hpp"
-#include "TSP/Unionfind.hpp"
 #include "TSP/utils.hpp"
 
 namespace TSP {
@@ -25,24 +24,25 @@ void TSP_Solver::solve_small_case() {
         if (float len = get_path_length(cur, N); len < min_len) min_len = len, std::copy(cur, cur + N, hamilton_path);
 }
 
-// Kruskal algorithm to find the minimum spanning tree
+// Prim algorithm to find the minimum spanning tree
 void TSP_Solver::MST() {
-    Unionfind<MAXN> uf;
-    std::memset(mst_node_rank, 0, sizeof(mst_node_rank[0]) * N);
-    uf.init(N);
-    int mst_edges_count = 0;
-    int edges[MAXN * (MAXN - 1) / 2];
-    int edges_count = 0;
-    rep(u, 0, N) rep(v, u + 1, N) edges[edges_count++] = u * MAXN + v;
-    std::sort(edges, edges + edges_count, [this](int x, int y) { return get_edge_dist(x) < get_edge_dist(y); });
-    rep(i, 0, edges_count) {
-        int edge = edges[i];
-        int u = edge / MAXN, v = edge % MAXN;
-        if (uf.merge(u, v)) {
-            all_edges[mst_edges_count++] = edge;
-            ++mst_node_rank[u], ++mst_node_rank[v];
-            if (mst_edges_count == N - 1) break;
+    float D[MAXN];
+    int pre[MAXN];
+    bool vi[MAXN];
+    D[0] = 0;
+    rep(i, 1, N) D[i] = std::numeric_limits<float>::infinity();
+    memset(vi, 0, sizeof(bool) * N);
+    memset(mst_node_rank, 0, sizeof(mst_node_rank[0]) * N);
+    rep(i, 0, N) {
+        int u;
+        float MIN = std::numeric_limits<float>::infinity();
+        rep(j, 0, N) if (!vi[j] && D[j] < MIN) u = j, MIN = D[j];
+        vi[u] = 1;
+        if (i) {
+            all_edges[i - 1] = u * MAXN + pre[u];
+            ++mst_node_rank[u], ++mst_node_rank[pre[u]];
         }
+        rep(v, 1, N) if (!vi[v]) if (float d = dist[u][v]; d < D[v]) D[v] = d, pre[v] = u;
     }
 }
 

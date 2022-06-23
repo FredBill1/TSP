@@ -7,7 +7,6 @@ using std::cout, std::endl, std::flush, std::memset;
 
 #include "TSP/AdjacencyList.hpp"
 #include "TSP/Tour.hpp"
-#include "TSP/Unionfind.hpp"
 #include "TSP/utils.hpp"
 
 namespace TSP {
@@ -23,25 +22,29 @@ void TSP_Solver::solve_small_case() {
         if (float len = get_path_length(cur, N); len < min_len) min_len = len, utils::copy(cur, cur + N, hamilton_path);
 }
 
-// Kruskal algorithm to find the minimum spanning tree
+// Prim algorithm to find the minimum spanning tree
 void TSP_Solver::MST() {
-    Unionfind uf(N);
+    float *D = new float[N];
+    int *pre = new int[N];
+    bool *vi = new bool[N];
+    D[0] = 0;
+    rep(i, 1, N) D[i] = std::numeric_limits<float>::infinity();
+    memset(vi, 0, sizeof(bool) * N);
     memset(mst_node_rank, 0, sizeof(mst_node_rank[0]) * N);
-    int mst_edges_count = 0;
-    int *edges = new int[N * (N - 1) / 2];
-    int edges_count = 0;
-    rep(u, 0, N) rep(v, u + 1, N) edges[edges_count++] = u * N + v;
-    utils::sort(edges, edges + edges_count, [this](int x, int y) { return get_edge_dist(x) < get_edge_dist(y); });
-    rep(i, 0, edges_count) {
-        int edge = edges[i];
-        int u = edge / N, v = edge % N;
-        if (uf.merge(u, v)) {
-            all_edges[mst_edges_count++] = edge;
-            ++mst_node_rank[u], ++mst_node_rank[v];
-            if (mst_edges_count == N - 1) break;
+    rep(i, 0, N) {
+        int u;
+        float MIN = std::numeric_limits<float>::infinity();
+        rep(j, 0, N) if (!vi[j] && D[j] < MIN) u = j, MIN = D[j];
+        vi[u] = 1;
+        if (i) {
+            all_edges[i - 1] = u * N + pre[u];
+            ++mst_node_rank[u], ++mst_node_rank[pre[u]];
         }
+        rep(v, 1, N) if (!vi[v]) if (float d = get_edge_dist(u * N + v); d < D[v]) { D[v] = d, pre[v] = u; }
     }
-    delete[] edges;
+    delete[] vi;
+    delete[] pre;
+    delete[] D;
 }
 
 // use greedy method with O(V^2 log V^2) time complexity to find the approximate minimum weight matching
@@ -50,21 +53,13 @@ void TSP_Solver::odd_verts_minimum_weight_match() {
     int *odd_vert_edges = all_edges + (N - 1);
     int odd_vert_edges_cnt = 0, odd_verts_cnt = 0;
     rep(i, 0, N) if (mst_node_rank[i] & 1) odd_verts[odd_verts_cnt++] = i;
-    int *odd_verts_all_edges = new int[odd_verts_cnt * (odd_verts_cnt - 1) / 2], odd_vert_all_edges_cnt = 0;
-
-    rep(u, 1, odd_verts_cnt) rep(v, 0, u) odd_verts_all_edges[odd_vert_all_edges_cnt++] = odd_verts[u] * N + odd_verts[v];
-    delete[] odd_verts;
-    utils::sort(odd_verts_all_edges, odd_verts_all_edges + odd_vert_all_edges_cnt,
-                [this](int x, int y) { return get_edge_dist(x) < get_edge_dist(y); });
-    bool *vi = new bool[N];
-    memset(vi, 0, sizeof(bool) * N);
-    for (int i = 0; i < odd_vert_all_edges_cnt && (odd_vert_edges_cnt << 1) < odd_verts_cnt; ++i) {
-        int edge = odd_verts_all_edges[i];
-        int u = edge / N, v = edge % N;
-        if (!(vi[u] || vi[v])) vi[u] = vi[v] = 1, odd_vert_edges[odd_vert_edges_cnt++] = edge;
+    for (int i = 0; i < odd_verts_cnt; i += 2) {
+        int u = odd_verts[i], res = i + 1;
+        rep(j, i + 2, odd_verts_cnt) if (get_edge_dist(u * N + odd_verts[j]) < get_edge_dist(u * N + odd_verts[res])) res = j;
+        if (res != i + 1) std::swap(odd_verts[i + 1], odd_verts[res]);
+        odd_vert_edges[odd_vert_edges_cnt++] = u * N + odd_verts[i + 1];
     }
-    delete[] vi;
-    delete[] odd_verts_all_edges;
+    delete[] odd_verts;
     all_edges_cnt = odd_vert_edges_cnt + N - 1;
 }
 

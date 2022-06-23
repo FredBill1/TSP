@@ -10,24 +10,6 @@
 
 namespace utils {
 
-template <typename It, typename Cmp = std::less<typename std::iterator_traits<It>::value_type>>
-void sort(It begin, It end, Cmp cmp = Cmp()) {
-    if (begin == end || begin == --end) return;
-    auto tmp = std::move(*begin);
-    It l = begin, r = end++;
-    for (;;) {
-        while (l != r && !cmp(*r, tmp)) --r;
-        if (l == r) break;
-        *l++ = std::move(*r);
-        while (l != r && cmp(*l, tmp)) ++l;
-        if (l == r) break;
-        *r-- = std::move(*l);
-    }
-    *l = std::move(tmp);
-    sort(begin, l, cmp);
-    sort(++l, end, cmp);
-}
-
 template <typename It> inline It next(It it, typename std::iterator_traits<It>::difference_type diff = 1) {
     while (diff--) ++it;
     return it;

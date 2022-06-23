@@ -52,15 +52,11 @@ void TSP_Solver::odd_verts_minimum_weight_match() {
     int *odd_vert_edges = all_edges + (N - 1);
     int odd_vert_edges_cnt = 0, odd_verts_cnt = 0;
     rep(i, 0, N) if (mst_node_rank[i] & 1) odd_verts[odd_verts_cnt++] = i;
-    int odd_verts_all_edges[MAXN * (MAXN - 1) / 2], odd_vert_all_edges_cnt = 0;
-    rep(u, 1, odd_verts_cnt) rep(v, 0, u) odd_verts_all_edges[odd_vert_all_edges_cnt++] = odd_verts[u] * MAXN + odd_verts[v];
-    std::sort(odd_verts_all_edges, odd_verts_all_edges + odd_vert_all_edges_cnt,
-              [this](int x, int y) { return get_edge_dist(x) < get_edge_dist(y); });
-    std::bitset<MAXN> vi;
-    for (int i = 0; i < odd_vert_all_edges_cnt && (odd_vert_edges_cnt << 1) < odd_verts_cnt; ++i) {
-        int edge = odd_verts_all_edges[i];
-        int u = edge / MAXN, v = edge % MAXN;
-        if (!(vi.test(u) || vi.test(v))) vi.set(u), vi.set(v), odd_vert_edges[odd_vert_edges_cnt++] = edge;
+    for (int i = 0; i < odd_verts_cnt; i += 2) {
+        int u = odd_verts[i], res = i + 1;
+        rep(j, i + 2, odd_verts_cnt) if (dist[u][odd_verts[j]] < dist[u][odd_verts[res]]) res = j;
+        if (res != i + 1) std::swap(odd_verts[i + 1], odd_verts[res]);
+        odd_vert_edges[odd_vert_edges_cnt++] = u * MAXN + odd_verts[i + 1];
     }
     all_edges_cnt = odd_vert_edges_cnt + N - 1;
 }

@@ -46,7 +46,7 @@ void TSP_Solver::MST() {
     }
 }
 
-// use greedy method with O(V^2 log V^2) time complexity to find the approximate minimum weight matching
+// use greedy method with O(|V|^2) time complexity to find the approximate minimum weight matching
 void TSP_Solver::odd_verts_minimum_weight_match() {
     int odd_verts[MAXN];
     int *odd_vert_edges = all_edges + (N - 1);
